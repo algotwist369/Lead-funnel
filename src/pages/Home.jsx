@@ -389,7 +389,7 @@ const Home = () => {
         <Box
           sx={{
             width: "100%",
-            maxWidth: { xs: "100%", sm: "520px", md: "550px" },
+            maxWidth: { xs: "880px", sm: "720px", md: "890px" },
             background: "rgba(255, 255, 255, 0.08)",
             backdropFilter: "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
@@ -422,7 +422,7 @@ const Home = () => {
                   opacity: 0.9,
                   fontSize: { xs: "1.4rem", sm: "1.6rem", lg: "1.2rem" }, // Increased for mobile
                   mb: 5,
-                  maxWidth: "620px",
+                  maxWidth: "800px",
                   mx: "auto",
                   lineHeight: 1.5,
                 }}
