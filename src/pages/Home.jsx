@@ -325,7 +325,7 @@ const Home = () => {
         sx={{
           position: "absolute",
           inset: 0,
-          bgcolor: "rgba(15, 23, 42, 0.6)",
+          bgcolor: "rgba(15, 23, 42, 0.29)",
           zIndex: 1,
         }}
       />
@@ -335,7 +335,7 @@ const Home = () => {
         sx={{
           position: "relative",
           zIndex: 2,
-          p: { xs: 2, sm: 4 },
+          p: { xs: 2, sm: 4, lg: 2 },
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -346,8 +346,9 @@ const Home = () => {
           src={logoUrl}
           alt="Logo"
           sx={{
-            height: { xs: 95, sm: 105, md: 115 }, // Scaled up for mobile
-            maxWidth: { xs: 380, sm: 450 },
+            display: "block",
+            height: { xs: 80, sm: 105, lg: 80 },
+            maxWidth: { xs: 220, sm: 450 }, // Constrained width instead of 85%
             objectFit: "contain",
           }}
         />
@@ -357,12 +358,13 @@ const Home = () => {
             sx={{
               bgcolor: "rgba(255,255,255,0.15)",
               color: "#fff",
-              px: { xs: 2.5, sm: 4 },
-              py: 1.8,
+              px: { xs: 2, sm: 4, lg: 2 },
+              py: 1.2,
               borderRadius: "20px",
               backdropFilter: "blur(8px)",
-              fontSize: { xs: "1.85rem", sm: "1.25rem" },
+              fontSize: { xs: "1rem", sm: "1.1rem" }, // Scaled down for safe mobile view
               fontWeight: "600",
+              whiteSpace: "nowrap",
             }}
           >
             {step > questionCount ? "Last step" : `${step} of ${questionCount}`}
@@ -387,15 +389,15 @@ const Home = () => {
         <Box
           sx={{
             width: "100%",
-            maxWidth: { xs: "100%", sm: "620px", md: "720px" },
+            maxWidth: { xs: "100%", sm: "520px", md: "550px" },
             background: "rgba(255, 255, 255, 0.08)",
             backdropFilter: "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
             borderRadius: { xs: "24px", sm: "32px" },
             border: "1px solid rgba(255, 255, 255, 0.2)",
-            boxShadow: "0 30px 60px -15px rgba(0, 0, 0, 0.6)",
-            p: { xs: 3, sm: 5, md: 6 },
+            p: { xs: 2.5, sm: 4 },
             textAlign: "center",
+            boxShadow: "none",
           }}
         >
           {!started ? (
@@ -403,7 +405,7 @@ const Home = () => {
               <Typography
                 fontWeight="800"
                 sx={{
-                  fontSize: { xs: "2.2rem", sm: "2.8rem", md: "3.2rem" }, // Larger font for welcome
+                  fontSize: { xs: "2.2rem", sm: "2.9rem", lg: "2.5rem" }, // Larger font for welcome
                   lineHeight: 1.1,
                   mb: 2.5,
                   background: `linear-gradient(to right, #fff, ${primaryColor})`,
@@ -418,7 +420,7 @@ const Home = () => {
                 sx={{
                   fontWeight: "100",
                   opacity: 0.9,
-                  fontSize: { xs: "1.4rem", sm: "1.6rem" }, // Increased for mobile
+                  fontSize: { xs: "1.4rem", sm: "1.6rem", lg: "1.2rem" }, // Increased for mobile
                   mb: 5,
                   maxWidth: "620px",
                   mx: "auto",
@@ -431,19 +433,21 @@ const Home = () => {
               <Button
                 variant="contained"
                 onClick={handleStart}
-                fullWidth
                 sx={{
-                  py: { xs: 2.2, sm: 2 }, // Taller button for mobile
+                  display: "block",
+                  mx: "auto",
+                  width: { xs: "200px", sm: "240px" },
+                  py: { xs: 2, sm: 1.9, md: 1.2 },
                   borderRadius: "18px",
-                  fontSize: { xs: "1.2rem", sm: "1.2rem" },
+                  fontSize: { xs: "1.6rem", sm: "1.7rem" },
                   fontWeight: "bold",
                   textTransform: "none",
                   bgcolor: primaryColor,
-                  boxShadow: `0 12px 24px -6px ${primaryColor}88`,
-                  "&:hover": { bgcolor: primaryColor, opacity: 0.95 },
+                  boxShadow: "none",
+                  "&:hover": { bgcolor: primaryColor, opacity: 0.95, boxShadow: "none" },
                 }}
               >
-                Get Started
+                Start
               </Button>
 
               <Box
@@ -456,8 +460,8 @@ const Home = () => {
                   opacity: 0.7,
                 }}
               >
-                <AccessTimeIcon sx={{ fontSize: 20 }} />
-                <Typography variant="body2" fontWeight="100" sx={{ fontSize: "1.3rem" }}>Takes about 30 seconds</Typography>
+                <AccessTimeIcon sx={{ fontSize: 25 }} />
+                <Typography variant="body2" fontWeight="100" sx={{ fontSize: "1.5rem" }}>Takes about 30 seconds</Typography>
               </Box>
             </Box>
           ) : step <= questionCount ? (
@@ -465,7 +469,7 @@ const Home = () => {
               <Typography
                 fontWeight="700"
                 sx={{
-                  fontSize: { xs: "1.7rem", sm: "2.1rem" }, // Significantly larger question text
+                  fontSize: { xs: "1.7rem", sm: "2.1rem", lg: "1.8rem" }, // Significantly larger question text
                   lineHeight: 1.3,
                   mb: 5,
                   color: "#fff",
@@ -489,7 +493,7 @@ const Home = () => {
                         key={option}
                         onClick={() => handleOptionSelect(option)}
                         sx={{
-                          p: { xs: 2.5, sm: 2.5 }, // Increased padding for mobile cards
+                          p: { xs: 2.5, sm: 1.2, lg: 1.2 }, // Increased padding for mobile cards
                           borderRadius: "20px",
                           cursor: "pointer",
                           display: "flex",
@@ -560,37 +564,18 @@ const Home = () => {
                       onChange={(e) => handleInputChange(`q${step}`, e.target.value)}
                       fullWidth
                       autoFocus
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          color: "#fff",
-                          bgcolor: "rgba(255,255,255,0.05)",
-                          borderRadius: "16px",
-                          "& fieldset": { borderColor: "rgba(255,255,255,0.2)" },
-                          "&.Mui-focused fieldset": { borderColor: primaryColor },
-                          fontSize: { xs: "1.3rem", sm: "1.7rem" }, // Increased font size
-                          padding: { xs: "16px", sm: "10px" },
-                        },
-                      }}
+                      sx={inputStyle(primaryColor)}
                     />
                   )}
               </Box>
             </Box>
           ) : step === questionCount + 1 ? (
             <Box component="form" onSubmit={handleSubmitDetails}>
-              <Typography
-                fontWeight="700"
-                sx={{
-                  fontSize: { xs: "1.7rem", sm: "2.5rem" }, // Increased for mobile
-                  mb: 1.5,
-                }}
-              >
-                Almost done!
-              </Typography>
               <Typography sx={{ opacity: 0.85, fontSize: "1.5rem", mb: 4 }}>
                 Please provide your details to receive the information.
               </Typography>
 
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.9 }}>
                 {askName && (
                   <TextField
                     variant="outlined"
@@ -600,7 +585,6 @@ const Home = () => {
                     fullWidth
                     required
                     sx={inputStyle(primaryColor)}
-                    InputLabelProps={{ style: { color: "rgba(255,255,255,0.6)", fontSize: "1.5rem" } }}
                   />
                 )}
                 {askPhone && (
@@ -612,7 +596,6 @@ const Home = () => {
                     fullWidth
                     required
                     sx={inputStyle(primaryColor)}
-                    InputLabelProps={{ style: { color: "rgba(255,255,255,0.6)", fontSize: "1.5rem" } }}
                   />
                 )}
                 {askEmail && (
@@ -624,7 +607,6 @@ const Home = () => {
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     fullWidth
                     sx={inputStyle(primaryColor)}
-                    InputLabelProps={{ style: { color: "rgba(255,255,255,0.6)", fontSize: "1.5rem" } }}
                   />
                 )}
                 {askAddress && (
@@ -637,7 +619,6 @@ const Home = () => {
                     onChange={(e) => handleInputChange("address", e.target.value)}
                     fullWidth
                     sx={inputStyle(primaryColor)}
-                    InputLabelProps={{ style: { color: "rgba(255,255,255,0.6)", fontSize: "1.5rem" } }}
                   />
                 )}
 
@@ -651,7 +632,7 @@ const Home = () => {
                       fontWeight: "500"
                     }}
                   >
-                    Preferred contact method:
+                    How would you like us to connect you?
                   </Typography>
                   <Box sx={{ display: "flex", gap: 2 }}>
                     {["call", "whatsapp"].map((method) => (
@@ -663,7 +644,7 @@ const Home = () => {
                           flex: 1,
                           borderRadius: "16px",
                           textTransform: "capitalize",
-                          py: { xs: 2, sm: 2.5 },
+                          py: { xs: 2, sm: 1, lg: 1 },
                           fontSize: { xs: "1.1rem", sm: "1.2rem" },
                           fontWeight: "700",
                           bgcolor: answers.preferred_contact === method ? primaryColor : "transparent",
@@ -677,6 +658,30 @@ const Home = () => {
                     ))}
                   </Box>
                 </Box>
+
+                {/* Mobile-only Send Button within the form card */}
+                <Button
+                  variant="contained"
+                  onClick={handleSubmitDetails}
+                  disabled={isSubmitting || !answers.name}
+                  sx={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    mt: 3,
+                    py: { lg: 1, xs: 1 },
+                    borderRadius: "18px",
+                    fontWeight: "bold",
+                    fontSize: "1.2rem",
+                    bgcolor: primaryColor,
+                    boxShadow: "none",
+                    "&:hover": { bgcolor: primaryColor, opacity: 0.9, boxShadow: "none" },
+                    gap: 1.5,
+                  }}
+                >
+                  Send <SendIcon sx={{ fontSize: 24 }} />
+                </Button>
               </Box>
 
               {isSubmitError && (
@@ -686,7 +691,7 @@ const Home = () => {
               )}
             </Box>
           ) : (
-            <Box sx={{ py: 4 }}>
+            <Box sx={{ py: { xs: 2, sm: 4 } }}>
               <Box
                 sx={{
                   width: 80,
@@ -701,36 +706,64 @@ const Home = () => {
                   border: `2px solid ${primaryColor}`,
                 }}
               >
-                <Typography sx={{ fontSize: 40 }}>✅</Typography>
+                <Typography sx={{ fontSize: 40 }}>✔</Typography>
               </Box>
-              <Typography variant="h4" fontWeight="800" gutterBottom>
+              <Typography variant="h4" fontWeight="800" gutterBottom sx={{ fontSize: { xs: "2rem", sm: "2.5rem" } }}>
                 Thank You!
               </Typography>
-              <Typography sx={{ opacity: 0.8, mb: 4 }}>
-                Your details have been submitted successfully. We will contact you shortly.
+              <Typography sx={{ opacity: 0.9, mb: 4, fontSize: { xs: "1.1rem", sm: "1.2rem" }, px: 2 }}>
+                Our team will connect you soon, or you can also contact us immediately:
               </Typography>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setStarted(false);
-                  setStep(1);
-                  setAnswers({
-                    q1: "", q2: "", q3: "",
-                    name: "", phone: "", email: "", address: "",
-                    preferred_contact: "call"
-                  });
-                }}
-                sx={{
-                  borderRadius: "12px",
-                  px: 4,
-                  py: 1.5,
-                  color: "#fff",
-                  borderColor: "rgba(255,255,255,0.3)",
-                  "&:hover": { borderColor: "#fff" },
-                }}
-              >
-                Back to Home
-              </Button>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: "300px", mx: "auto" }}>
+                {funnel?.contact?.phone_number && (
+                  <Button
+                    variant="contained"
+                    component="a"
+                    href={`tel:${funnel.contact.phone_number}`}
+                    fullWidth
+                    sx={{
+                      py: 1.5,
+                      borderRadius: "16px",
+                      bgcolor: primaryColor,
+                      fontWeight: "700",
+                      fontSize: "1.1rem",
+                      textTransform: "none",
+                      boxShadow: "none",
+                      "&:hover": { bgcolor: primaryColor, opacity: 0.9, boxShadow: "none" },
+                    }}
+                  >
+                    Call Us Now
+                  </Button>
+                )}
+                {funnel?.contact?.whatsapp_number && (
+                  <Button
+                    variant="contained"
+                    component="a"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://wa.me/${funnel.contact.whatsapp_number.replace(/\D/g, "")}?text=${encodeURIComponent(
+                      `Hi! I'm ${answers.name}. I just completed your funnel and I'm interested.\n\n` +
+                      (questions || []).map((q, i) => `${q.label}: ${answers[`q${i + 1}`] || "N/A"}`).join("\n") +
+                      `\n\nPhone: ${answers.phone}\nEmail: ${answers.email}`
+                    )}`}
+                    fullWidth
+                    sx={{
+                      py: 1.5,
+                      borderRadius: "16px",
+                      bgcolor: "#25D366",
+                      color: "#fff",
+                      fontWeight: "700",
+                      fontSize: "1.1rem",
+                      textTransform: "none",
+                      boxShadow: "none",
+                      "&:hover": { bgcolor: "#25D366", opacity: 0.9, boxShadow: "none" },
+                    }}
+                  >
+                    WhatsApp Us
+                  </Button>
+                )}
+              </Box>
             </Box>
           )}
         </Box>
@@ -797,7 +830,7 @@ const Home = () => {
                 borderRadius: "50%",
                 boxShadow: "none",
                 "&.Mui-disabled": { bgcolor: primaryColor, opacity: 0.4 },
-                "&:hover": { bgcolor: primaryColor, opacity: 0.9 },
+                "&:hover": { bgcolor: primaryColor, opacity: 0.9, boxShadow: "none" },
               }}
             >
               {step === questionCount + 1 ? (
@@ -826,8 +859,16 @@ const inputStyle = (primaryColor) => ({
     "& fieldset": { borderColor: "rgba(255,255,255,0.15)" },
     "&.Mui-focused fieldset": { borderColor: primaryColor },
     "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3)" },
-    fontSize: { xs: "1.3rem", sm: "1.6rem" }, // Matched to question inputs
-    padding: { xs: "14px 16px", sm: "18px 20px" },
+  },
+  "& .MuiOutlinedInput-input": {
+    fontSize: { xs: "1.1rem", sm: "1.3rem", lg: "1rem" },
+    padding: { xs: "14px 16px", sm: "16px 20px", lg: "10px 16px" },
+  },
+  "& .MuiInputLabel-root": {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: { xs: "1rem", sm: "1.1rem", lg: "0.9rem" },
+    top: { lg: -2 },
+    "&.Mui-focused": { color: primaryColor },
   },
 });
 
