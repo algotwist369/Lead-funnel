@@ -405,7 +405,7 @@ const Home = () => {
               <Typography
                 fontWeight="800"
                 sx={{
-                  fontSize: { xs: "2.2rem", sm: "2.9rem", lg: "2.5rem" }, // Larger font for welcome
+                  fontSize: { xs: "2.2rem", sm: "3.5rem", lg: "2.5rem" }, // Larger font for welcome
                   lineHeight: 1.1,
                   mb: 2.5,
                   background: `linear-gradient(to right, #fff, ${primaryColor})`,
@@ -418,9 +418,9 @@ const Home = () => {
               <Typography
                 className="text-start"
                 sx={{
-                  fontWeight: "100",
+                  fontWeight: "500",
                   opacity: 0.9,
-                  fontSize: { xs: "1.4rem", sm: "1.6rem", lg: "1.2rem" }, // Increased for mobile
+                  fontSize: { xs: "1.4rem", sm: "2rem", lg: "1.2rem" }, // Increased for mobile
                   mb: 5,
                   maxWidth: "800px",
                   mx: "auto",
@@ -437,7 +437,7 @@ const Home = () => {
                   display: "block",
                   mx: "auto",
                   width: { xs: "200px", sm: "240px" },
-                  py: { xs: 2, sm: 1.9, md: 1.2 },
+                  py: { xs: 2, sm: 2, lg: 1.2 },
                   borderRadius: "18px",
                   fontSize: { xs: "1.6rem", sm: "1.7rem" },
                   fontWeight: "bold",
@@ -469,7 +469,7 @@ const Home = () => {
               <Typography
                 fontWeight="700"
                 sx={{
-                  fontSize: { xs: "1.7rem", sm: "2.1rem", lg: "1.8rem" }, // Significantly larger question text
+                  fontSize: { xs: "1.7rem", sm: "2.5rem", lg: "1.8rem" }, // Significantly larger question text
                   lineHeight: 1.3,
                   mb: 5,
                   color: "#fff",
@@ -493,7 +493,7 @@ const Home = () => {
                         key={option}
                         onClick={() => handleOptionSelect(option)}
                         sx={{
-                          p: { xs: 2.5, sm: 1.2, lg: 1.2 }, // Increased padding for mobile cards
+                          p: { xs: 2.5, sm: 2.3, lg: 1.2 }, // Increased padding for mobile cards
                           borderRadius: "20px",
                           cursor: "pointer",
                           display: "flex",
@@ -571,7 +571,7 @@ const Home = () => {
             </Box>
           ) : step === questionCount + 1 ? (
             <Box component="form" onSubmit={handleSubmitDetails}>
-              <Typography sx={{ opacity: 0.85, fontSize: "1.5rem", mb: 4 }}>
+              <Typography sx={{ opacity: 0.85, fontSize: {sm: "1.9rem",lg:"1.5rem"}, mb: 4 }}>
                 Please provide your details to receive the information.
               </Typography>
 
@@ -861,7 +861,7 @@ const inputStyle = (primaryColor) => ({
     "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3)" },
   },
   "& .MuiOutlinedInput-input": {
-    fontSize: { xs: "1.1rem", sm: "1.3rem", lg: "1rem" },
+    fontSize: { xs: "1.7rem", sm: "1.8rem", lg: "1rem" },
     padding: { xs: "14px 16px", sm: "16px 20px", lg: "10px 16px" },
   },
   "& .MuiInputLabel-root": {
