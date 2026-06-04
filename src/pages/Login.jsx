@@ -4,7 +4,8 @@ import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import API_BASE_URL from "../utils/api";
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "1035838949713-7atp6lfctnsk8modn8r537ce7mbo1snn.apps.googleusercontent.com";
+const DEV_GOOGLE_CLIENT_ID = "1035838949713-7atp6lfctnsk8modn8r537ce7mbo1snn.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || (import.meta.env.DEV ? DEV_GOOGLE_CLIENT_ID : "");
 
 const loginRequest = async ({ id_token }) => {
   const response = await fetch(`${API_BASE_URL}/auth/google`, {
