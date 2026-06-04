@@ -47,7 +47,7 @@ const Login = () => {
     script.onload = () => {
       if (window.google && window.google.accounts && window.google.accounts.id) {
         if (!GOOGLE_CLIENT_ID) {
-          setConfigError("Google login is not configured (missing client ID)");
+          setConfigError("Google login is not configured. Set VITE_GOOGLE_CLIENT_ID in your frontend environment and redeploy.");
           return;
         }
 
