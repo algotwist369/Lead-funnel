@@ -11,7 +11,8 @@ const SettingsTab = () => {
         <Box
           sx={{
             borderRadius: 2,
-            border: "1px solid rgba(0,0,0,0.08)",
+            border: "1px solid rgba(148,163,184,0.18)",
+            bgcolor: "rgba(15,23,42,0.78)",
             p: 3,
           }}
         >
@@ -35,7 +36,8 @@ const SettingsTab = () => {
         <Box
           sx={{
             borderRadius: 2,
-            border: "1px solid rgba(0,0,0,0.08)",
+            border: "1px solid rgba(148,163,184,0.18)",
+            bgcolor: "rgba(15,23,42,0.78)",
             p: 3,
           }}
         >
@@ -53,4 +55,3 @@ const SettingsTab = () => {
 };
 
 export default SettingsTab;
-

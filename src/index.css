@@ -1,6 +1,44 @@
 @import "tailwindcss";
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background-color: #020617;
+}
+
 body {
-  background-color: black;
+  margin: 0;
+  background-color: #020617;
   color: white;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+.funnel-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .funnel-description {
+    -webkit-line-clamp: 4;
+  }
 }

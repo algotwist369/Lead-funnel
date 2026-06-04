@@ -4,7 +4,7 @@ import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import API_BASE_URL from "../utils/api";
 
-const GOOGLE_CLIENT_ID = "437429633678-mosk9iguvlap3htfu3nd6qh50sgvq05j.apps.googleusercontent.com" || import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "1035838949713-7atp6lfctnsk8modn8r537ce7mbo1snn.apps.googleusercontent.com";
 
 const loginRequest = async ({ id_token }) => {
   const response = await fetch(`${API_BASE_URL}/auth/google`, {
@@ -29,7 +29,7 @@ const loginRequest = async ({ id_token }) => {
 const Login = () => {
   const navigate = useNavigate();
   const [configError, setConfigError] = useState("");
-  const { mutate: login, isPending, isError, error } = useMutation({
+  const { mutate: login, isError, error } = useMutation({
     mutationFn: loginRequest,
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);
@@ -44,7 +44,6 @@ const Login = () => {
     script.async = true;
     script.defer = true;
     script.onload = () => {
-      /* global google */
       if (window.google && window.google.accounts && window.google.accounts.id) {
         if (!GOOGLE_CLIENT_ID) {
           setConfigError("Google login is not configured (missing client ID)");
@@ -87,22 +86,24 @@ const Login = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        bgcolor: "background.default",
-        px: 2,
+        bgcolor: "#f8fafc",
+        px: { xs: 2, sm: 3 },
+        py: 4,
       }}
     >
       <Card
         sx={{
-          maxWidth: 400,
+          maxWidth: 420,
           width: "100%",
           borderRadius: 3,
-          boxShadow: "none",
-          bgcolor: "background.paper",
+          boxShadow: "0 18px 45px rgba(15,23,42,0.1)",
+          bgcolor: "#fff",
+          border: "1px solid rgba(15,23,42,0.06)",
         }}
       >
         <CardContent
           sx={{
-            p: 4,
+            p: { xs: 3, sm: 4 },
             display: "flex",
             flexDirection: "column",
             gap: 3,
@@ -134,6 +135,8 @@ const Login = () => {
             sx={{
               display: "flex",
               justifyContent: "center",
+              overflow: "hidden",
+              width: "100%",
             }}
           />
         </CardContent>

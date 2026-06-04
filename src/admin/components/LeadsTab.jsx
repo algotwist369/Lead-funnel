@@ -23,7 +23,9 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import API_BASE_URL from "../../utils/api";
 
@@ -46,6 +48,8 @@ const fetchLeads = async () => {
 
 const LeadsTab = () => {
   const queryClient = useQueryClient();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [preferredFilter, setPreferredFilter] = useState("all");
@@ -159,6 +163,10 @@ const LeadsTab = () => {
   const currentPage = Math.min(page, totalPages);
   const start = (currentPage - 1) * pageSize;
   const paginated = processed.slice(start, start + pageSize);
+  const convertedCount = leads.filter((lead) => lead.status === "converted").length;
+  const conversionRate = leads.length
+    ? Math.round((convertedCount / leads.length) * 100)
+    : 0;
 
   const handlePageChange = (_, value) => {
     setPage(value);
@@ -318,7 +326,7 @@ const LeadsTab = () => {
           >
             <MenuItem value="newest">Newest first</MenuItem>
             <MenuItem value="oldest">Oldest first</MenuItem>
-            <MenuItem value="name_asc">Name A–Z</MenuItem>
+            <MenuItem value="name_asc">Name A-Z</MenuItem>
           </Select>
         </FormControl>
         <Box sx={{ flexGrow: 1 }} />
@@ -327,17 +335,132 @@ const LeadsTab = () => {
           variant="outlined"
           onClick={handleExportPdf}
           disabled={isExporting}
+          sx={{ alignSelf: { xs: "stretch", sm: "center" } }}
         >
           {isExporting ? "Exporting..." : "Export PDF"}
         </Button>
+      </Stack>
+
+      <Stack
+        direction="row"
+        spacing={1}
+        useFlexGap
+        flexWrap="wrap"
+        sx={{ mb: 2 }}
+      >
+        <Chip label={`${leads.length} total leads`} size="small" />
+        <Chip label={`${processed.length} visible`} size="small" variant="outlined" />
+        <Chip label={`${conversionRate}% converted`} size="small" color="success" variant="outlined" />
       </Stack>
  
       {!processed.length ? (
         <Typography variant="body2" color="text.secondary">
           No leads match your search and filters.
         </Typography>
+      ) : isMobile ? (
+        <Stack spacing={1.5}>
+          {paginated.map((lead) => {
+            const funnelTitle = lead.funnel_title || lead.funnel_id?.title || "-";
+            const funnelSlug = lead.funnel_slug || lead.funnel_id?.slug || null;
+            const utmSource = lead.utm?.source || "-";
+
+            return (
+              <Paper
+                key={lead._id}
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: "rgba(15,23,42,0.78)",
+                  borderColor: "rgba(148,163,184,0.18)",
+                }}
+              >
+                <Stack spacing={1.5}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">
+                      {funnelTitle}
+                    </Typography>
+                    {funnelSlug && (
+                      <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
+                        {funnelSlug}
+                      </Typography>
+                    )}
+                  </Box>
+
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight={700}>
+                      {lead.name || "Unnamed lead"}
+                    </Typography>
+                    <Typography variant="body2">{lead.phone || "-"}</Typography>
+                    {lead.email && (
+                      <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
+                        {lead.email}
+                      </Typography>
+                    )}
+                  </Box>
+
+                  <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                    <Chip label={lead.preferred_contact === "whatsapp" ? "WhatsApp" : "Call"} size="small" variant="outlined" />
+                    <Chip label={`UTM: ${utmSource}`} size="small" variant="outlined" />
+                    <Chip
+                      label={lead.createdAt ? new Date(lead.createdAt).toLocaleDateString() : "-"}
+                      size="small"
+                      variant="outlined"
+                    />
+                  </Stack>
+
+                  <FormControl size="small" fullWidth>
+                    <InputLabel>Status</InputLabel>
+                    <Select
+                      label="Status"
+                      value={lead.status}
+                      disabled={isUpdatingStatus}
+                      onChange={(e) =>
+                        changeStatus({
+                          id: lead._id,
+                          status: e.target.value,
+                        })
+                      }
+                    >
+                      <MenuItem value="new">New</MenuItem>
+                      <MenuItem value="contacted">Contacted</MenuItem>
+                      <MenuItem value="converted">Converted</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <Stack direction="row" spacing={1}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      fullWidth
+                      onClick={() => handleOpenAnswers(lead)}
+                    >
+                      View
+                    </Button>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      fullWidth
+                      disabled={isDeleting}
+                      onClick={() => softDeleteLead(lead._id)}
+                    >
+                      Delete
+                    </Button>
+                  </Stack>
+                </Stack>
+              </Paper>
+            );
+          })}
+        </Stack>
       ) : (
-        <TableContainer component={Paper}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            bgcolor: "rgba(15,23,42,0.78)",
+            border: "1px solid rgba(148,163,184,0.18)",
+          }}
+        >
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -502,8 +625,33 @@ const LeadsTab = () => {
                         variant="body2"
                         sx={{ display: "block" }}
                       >
-                        <strong className="bg-gray-500 p-1">Q. {item.question_text} :</strong>{" "}
-                        <strong className="bg-green-500 p-1">{item.answer}</strong>
+                        <Box
+                          component="strong"
+                          sx={{
+                            display: "inline-block",
+                            bgcolor: "rgba(148,163,184,0.18)",
+                            color: "text.primary",
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                            mr: 0.5,
+                          }}
+                        >
+                          Q. {item.question_text} :
+                        </Box>
+                        <Box
+                          component="strong"
+                          sx={{
+                            display: "inline-block",
+                            bgcolor: "rgba(34,197,94,0.16)",
+                            color: "#86efac",
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                          }}
+                        >
+                          {item.answer}
+                        </Box>
                       </Typography>
                     ))}
                   </Box>

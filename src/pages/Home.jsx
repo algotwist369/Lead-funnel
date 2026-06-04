@@ -37,28 +37,94 @@ const CheckIcon = ({ className }) => (
   </svg>
 );
 
+const normalizePhoneDigits = (phone) => phone.replace(/\D/g, "");
+
+const isValidInternationalPhone = (phone) => {
+  const trimmed = phone.trim();
+  const digits = normalizePhoneDigits(trimmed);
+
+  if (!trimmed) return false;
+  if (digits.length < 7 || digits.length > 15) return false;
+  if (!/^[+\d][\d\s().-]{6,24}$/.test(trimmed)) return false;
+  if ((trimmed.match(/\+/g) || []).length > 1) return false;
+  if (trimmed.includes("+") && !trimmed.startsWith("+")) return false;
+  if (/^(\d)\1+$/.test(digits)) return false;
+
+  return true;
+};
+
+const isValidEmail = (email) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+
+const validateLeadAnswers = (answers, capture) => {
+  const errors = {};
+  const askName = capture.ask_name !== false;
+  const askPhone = capture.ask_phone !== false;
+  const askEmail = capture.ask_email === true;
+  const askAddress = capture.ask_address === true;
+
+  const name = answers.name.trim();
+  const phone = answers.phone.trim();
+  const email = answers.email.trim();
+  const address = answers.address.trim();
+
+  if (askName) {
+    if (!name) errors.name = "Please enter your full name.";
+    else if (name.length < 2) errors.name = "Name must be at least 2 characters.";
+    else if (name.length > 80) errors.name = "Name is too long.";
+    else if (!/^[\p{L}\p{M}][\p{L}\p{M}\s.'-]{1,79}$/u.test(name)) {
+      errors.name = "Use letters only, with spaces, apostrophes, dots, or hyphens.";
+    }
+  }
+
+  if (askPhone) {
+    if (!phone) errors.phone = "Please enter your phone number.";
+    else if (!isValidInternationalPhone(phone)) {
+      errors.phone = "Enter a valid international phone number, like +971 50 123 4567.";
+    }
+  }
+
+  if ((askEmail || email) && !isValidEmail(email)) {
+    errors.email = "Enter a valid email address.";
+  }
+
+  if (askAddress && address && address.length < 6) {
+    errors.address = "Please enter a more complete address.";
+  }
+
+  return {
+    errors,
+    isValid: Object.keys(errors).length === 0,
+  };
+};
+
+const FieldError = ({ message }) =>
+  message ? (
+    <p className="mt-2 text-sm font-medium text-red-300">{message}</p>
+  ) : null;
+
 // --- Sub-Components ---
 
 const StartScreen = ({ funnel, primaryColor, onStart }) => (
-  <div className="text-center transition-all duration-700 opacity-100 px-2 flex flex-col items-center justify-center">
+  <div className="text-center transition-all duration-700 opacity-100 px-1 flex flex-col items-center justify-center">
     <h1
-      className="lg:text-5xl sm:text-6xl font-extrabold leading-tight mb-4"
+      className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 max-w-5xl"
     >
       {funnel?.title || "Welcome"}
     </h1>
-    <p className="text-lg sm:text-[33px] text-center font-medium opacity-90 mb-8 max-w-5xl mx-auto leading-relaxed text-white/80">
+    <p className="funnel-description text-base sm:text-xl lg:text-2xl text-center font-medium opacity-90 mb-7 max-w-3xl mx-auto leading-relaxed text-white/80">
       {funnel?.description || "Take a moment to share your preferences."}
     </p>
     <button
       onClick={onStart}
-      className="w-full sm:w-auto px-18 py-6 rounded-4xl text-4xl font-bold transition-all hover:scale-105 active:scale-95 shadow-xl"
+      className="w-full max-w-xs sm:w-auto sm:min-w-52 px-8 py-4 rounded-full text-xl sm:text-2xl font-bold transition-all hover:scale-[1.02] active:scale-95 shadow-xl"
       style={{ backgroundColor: primaryColor }}
     >
       Start
     </button>
-    <div className="mt-6 bg-gray-500 px-2 py-1 rounded-full flex items-center justify-center gap-3 opacity-60">
-      <TimeIcon className="w-6 h-6" />
-      <span className="text-2xl font-light">Takes about 30 seconds</span>
+    <div className="mt-5 bg-white/10 border border-white/15 px-4 py-2 rounded-full flex items-center justify-center gap-2 text-white/80">
+      <TimeIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+      <span className="text-sm sm:text-base font-medium">Takes about 30 seconds</span>
     </div>
   </div>
 );
@@ -69,11 +135,11 @@ const QuestionStep = ({ question, step, answers, onOptionSelect, onInputChange, 
 
   return (
     <div className="transition-all duration-500 opacity-100">
-      <h2 className="lg:text-6xl text-[45px] font-bold leading-snug mb-10 text-white">
+      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6 sm:mb-8 text-white">
         Q. {question.label}
       </h2>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 sm:gap-4">
         {(question.type === "single" || isMulti || !question.type) &&
           question.options.map((option) => {
             const isSelected = isMulti
@@ -84,20 +150,20 @@ const QuestionStep = ({ question, step, answers, onOptionSelect, onInputChange, 
               <div
                 key={option}
                 onClick={() => onOptionSelect(option)}
-                className={`p-4 sm:p-5 rounded-3xl cursor-pointer flex items-center gap-4 transition-all duration-300 border-2 ${isSelected
+                className={`p-4 sm:p-5 rounded-2xl cursor-pointer flex items-center gap-3 sm:gap-4 transition-all duration-300 border-2 min-h-16 ${isSelected
                   ? "bg-white/10 border-indigo-500"
                   : "bg-white/20 border-white/20 hover:bg-white/10 hover:border-white/20"
                   }`}
                 style={isSelected ? { borderColor: primaryColor, backgroundColor: `${primaryColor}22` } : {}}
               >
                 <div
-                  className={`w-10 h-10 flex items-center justify-center shrink-0 border-2 transition-colors ${isMulti ? "rounded-lg" : "rounded-full"
+                  className={`w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center shrink-0 border-2 transition-colors ${isMulti ? "rounded-lg" : "rounded-full"
                     } ${isSelected ? "border-white" : "border-white/40"}`}
                   style={isSelected ? { backgroundColor: primaryColor, borderColor: primaryColor } : {}}
                 >
                   {isSelected && <div className={`w-2.5 h-2.5 bg-white ${isMulti ? "rounded-sm" : "rounded-full"}`} />}
                 </div>
-                <span className={`lg:text-4xl text-3xl ${isSelected ? "font-extrabold text-white" : "font-semibold text-white/80"}`}>
+                <span className={`text-lg sm:text-2xl lg:text-3xl leading-snug break-words min-w-0 ${isSelected ? "font-extrabold text-white" : "font-semibold text-white/80"}`}>
                   {option}
                 </span>
               </div>
@@ -111,7 +177,7 @@ const QuestionStep = ({ question, step, answers, onOptionSelect, onInputChange, 
               placeholder="Type your answer here..."
               value={currentAnswer}
               onChange={(e) => onInputChange(`q${step}`, e.target.value)}
-              className="w-full bg-white/10 border-2 border-white/20 rounded-3xl p-5 text-xl text-white placeholder-white/20 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-white/10 border-2 border-white/20 rounded-2xl p-4 sm:p-5 text-lg sm:text-xl text-white placeholder-white/40 focus:outline-none focus:border-indigo-500 transition-colors"
               style={{ borderColor: currentAnswer ? primaryColor : "rgba(255,255,255,0.1)" }}
               autoFocus
             />
@@ -121,7 +187,7 @@ const QuestionStep = ({ question, step, answers, onOptionSelect, onInputChange, 
               placeholder="Type your answer here..."
               value={currentAnswer}
               onChange={(e) => onInputChange(`q${step}`, e.target.value)}
-              className="w-full bg-white/10 border-2 border-white/20 rounded-3xl p-5 text-xl text-white placeholder-white/20 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-white/10 border-2 border-white/20 rounded-2xl p-4 sm:p-5 text-lg sm:text-xl text-white placeholder-white/40 focus:outline-none focus:border-indigo-500 transition-colors"
               style={{ borderColor: currentAnswer ? primaryColor : "rgba(255,255,255,0.1)" }}
               autoFocus
             />
@@ -133,70 +199,105 @@ const QuestionStep = ({ question, step, answers, onOptionSelect, onInputChange, 
 };
 
 const LeadCaptureForm = ({
-  answers, onInputChange, onSubmit, isSubmitting, capture, primaryColor
+  answers,
+  onInputChange,
+  onFieldBlur,
+  onSubmit,
+  capture,
+  primaryColor,
+  errors,
 }) => {
   const askName = capture.ask_name !== false;
   const askPhone = capture.ask_phone !== false;
   const askEmail = capture.ask_email === true;
   const askAddress = capture.ask_address === true;
 
-  const inputClasses = "w-full bg-white/20 border-2 border-white/20 rounded-[1.5rem] p-5 text-4xl text-white placeholder-white/70 focus:outline-none focus:border-indigo-500 transition-colors";
+  const inputClasses = "w-full bg-white/20 border-2 rounded-2xl p-4 sm:p-5 text-lg sm:text-xl text-white placeholder-white/70 focus:outline-none focus:border-indigo-500 transition-colors";
+
+  const fieldClass = (field) =>
+    `${inputClasses} ${errors[field] ? "border-red-400" : "border-white/20"}`;
 
   return (
-    <div className="transition-all duration-500 opacity-100 space-y-5 border p-8 rounded-3xl bg-black/50 border-black/10">
-      <p className="text-5xl lg:text-6xl font-medium opacity-80 mb-10">
+    <div className="transition-all duration-500 opacity-100 space-y-5 border p-4 sm:p-6 lg:p-8 rounded-3xl bg-black/55 border-white/10 backdrop-blur-md">
+      <p className="text-2xl sm:text-3xl lg:text-4xl font-semibold opacity-90 mb-6">
         Please provide your details.
       </p>
 
-      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-6">
+      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-4 sm:space-y-5">
         {askName && (
-          <input
-            type="text"
-            placeholder="Full Name"
-            required
-            value={answers.name}
-            onChange={(e) => onInputChange("name", e.target.value)}
-            className={inputClasses}
-          />
+          <div>
+            <input
+              type="text"
+              placeholder="Full Name"
+              autoComplete="name"
+              required
+              value={answers.name}
+              onBlur={() => onFieldBlur("name")}
+              onChange={(e) => onInputChange("name", e.target.value)}
+              className={fieldClass("name")}
+              aria-invalid={Boolean(errors.name)}
+            />
+            <FieldError message={errors.name} />
+          </div>
         )}
         {askPhone && (
-          <input
-            type="tel"
-            placeholder="Phone Number"
-            required
-            value={answers.phone}
-            onChange={(e) => onInputChange("phone", e.target.value)}
-            className={inputClasses}
-          />
+          <div>
+            <input
+              type="tel"
+              inputMode="tel"
+              placeholder="Phone Number"
+              autoComplete="tel"
+              required
+              value={answers.phone}
+              onBlur={() => onFieldBlur("phone")}
+              onChange={(e) => onInputChange("phone", e.target.value)}
+              className={fieldClass("phone")}
+              aria-invalid={Boolean(errors.phone)}
+            />
+            <FieldError message={errors.phone} />
+          </div>
         )}
         {askEmail && (
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={answers.email}
-            onChange={(e) => onInputChange("email", e.target.value)}
-            className={inputClasses}
-          />
+          <div>
+            <input
+              type="email"
+              inputMode="email"
+              placeholder="Email Address"
+              autoComplete="email"
+              value={answers.email}
+              onBlur={() => onFieldBlur("email")}
+              onChange={(e) => onInputChange("email", e.target.value)}
+              className={fieldClass("email")}
+              aria-invalid={Boolean(errors.email)}
+            />
+            <FieldError message={errors.email} />
+          </div>
         )}
         {askAddress && (
-          <textarea
-            placeholder="Address"
-            rows={1}
-            value={answers.address}
-            onChange={(e) => onInputChange("address", e.target.value)}
-            className={inputClasses}
-          />
+          <div>
+            <textarea
+              placeholder="Address"
+              rows={1}
+              autoComplete="street-address"
+              value={answers.address}
+              onBlur={() => onFieldBlur("address")}
+              onChange={(e) => onInputChange("address", e.target.value)}
+              className={fieldClass("address")}
+              aria-invalid={Boolean(errors.address)}
+            />
+            <FieldError message={errors.address} />
+          </div>
         )}
 
         <div className="text-left">
-          <p className="text-3xl lg:text-4xlfont-bold mb-4 opacity-90">How would you like to be contacted?</p>
-          <div className="flex gap-3">
+          <p className="text-base sm:text-lg font-bold mb-3 opacity-90">How would you like to be contacted?</p>
+          <div className="grid grid-cols-2 gap-3">
             {["call", "whatsapp"].map((method) => (
               <button
                 key={method}
                 type="button"
                 onClick={() => onInputChange("preferred_contact", method)}
-                className={`flex-1 py-5 rounded-full font-bold capitalize transition-all border-2 text-4xl ${answers.preferred_contact === method
+                className={`py-4 rounded-full font-bold capitalize transition-all border-2 text-base sm:text-lg ${answers.preferred_contact === method
                   ? "bg-white text-slate-900 border-white"
                   : "border-white/20 text-white hover:bg-white/5"
                   }`}
@@ -207,45 +308,40 @@ const LeadCaptureForm = ({
             ))}
           </div>
         </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting || !answers.name || !answers.phone}
-          className="w-full flex items-center justify-center gap-4 py-6 rounded-full text-4xl font-bold transition-all shadow-lg mt-10 disabled:opacity-50"
-          style={{ backgroundColor: primaryColor }}
-        >
-          {isSubmitting ? "Sending..." : (
-            <>
-              Send <SendIcon className="w-9 h-9" />
-            </>
-          )}
-        </button>
+        <p className="text-sm text-white/60 text-center pt-1">
+          Tap Submit below when your details are ready.
+        </p>
       </form>
     </div>
   );
 };
 
 const ThankYouScreen = ({ funnel, answers, questions, primaryColor }) => (
-  <div className="text-center py-6 transition-all duration-500 opacity-100">
+  <div className="text-center py-6 transition-all duration-500 opacity-100 px-2">
     <div
       className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border-4"
       style={{ backgroundColor: `${primaryColor}22`, borderColor: primaryColor }}
     >
       <CheckIcon className="w-10 h-10" style={{ color: primaryColor }} />
     </div>
-    <h1 className="text-4xl font-extrabold mb-4">Thank You!</h1>
-    <p className="text-xl opacity-90 mb-6 max-w-md mx-auto leading-relaxed">
-      Our team will connect you soon, or you can contact us immediately:
+    <h1 className="text-3xl sm:text-4xl font-extrabold mb-4">Thank You!</h1>
+    <p className="text-base sm:text-xl opacity-90 mb-3 max-w-md mx-auto leading-relaxed">
+      Your details have been submitted. Our team will connect with you soon.
     </p>
+    {(funnel?.contact?.phone_number || funnel?.contact?.whatsapp_number) && (
+      <p className="text-sm sm:text-base text-white/75 mb-6">
+        Need help right now? Contact us instantly.
+      </p>
+    )}
 
     <div className="flex flex-col gap-4 max-w-xs mx-auto">
       {funnel?.contact?.phone_number && (
         <a
           href={`tel:${funnel.contact.phone_number}`}
-          className="w-full py-4 rounded-xl font-bold text-lg text-center transition-all hover:scale-105"
+          className="w-full py-4 rounded-xl font-bold text-lg text-center transition-all hover:scale-[1.02] active:scale-95"
           style={{ backgroundColor: primaryColor }}
         >
-          Call Us Now
+          Call Now
         </a>
       )}
       {funnel?.contact?.whatsapp_number && (
@@ -281,6 +377,17 @@ const Home = () => {
     email: "",
     address: "",
     preferred_contact: "call",
+  });
+  const [touchedFields, setTouchedFields] = useState({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [utm] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      source: params.get("utm_source") || "",
+      medium: params.get("utm_medium") || "",
+      campaign: params.get("utm_campaign") || "",
+      content: params.get("utm_content") || "",
+    };
   });
 
   const {
@@ -337,6 +444,13 @@ const Home = () => {
     : baseQuestions;
 
   const questionCount = questions.length;
+  const captureConfig = funnel?.capture_step || {};
+  const leadValidation = validateLeadAnswers(answers, captureConfig);
+  const visibleLeadErrors = Object.fromEntries(
+    Object.entries(leadValidation.errors).filter(
+      ([field]) => submitAttempted || touchedFields[field]
+    )
+  );
 
   const handleStart = () => {
     setStarted(true);
@@ -377,6 +491,24 @@ const Home = () => {
     setAnswers(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleFieldBlur = (field) => {
+    setTouchedFields((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const handleLeadSubmit = () => {
+    setSubmitAttempted(true);
+    setTouchedFields((prev) => ({
+      ...prev,
+      name: true,
+      phone: true,
+      email: true,
+      address: true,
+    }));
+
+    if (!leadValidation.isValid) return;
+    submitLeadMutation();
+  };
+
   const submitLead = async () => {
     const payload = {
       name: answers.name,
@@ -384,6 +516,7 @@ const Home = () => {
       email: answers.email,
       address: answers.address,
       preferred_contact: answers.preferred_contact || "call",
+      utm,
     };
 
     if (slug && funnel?._id) {
@@ -457,10 +590,12 @@ const Home = () => {
         <LeadCaptureForm
           answers={answers}
           onInputChange={handleInputChange}
-          onSubmit={submitLeadMutation}
+          onFieldBlur={handleFieldBlur}
+          onSubmit={handleLeadSubmit}
           isSubmitting={isSubmitting}
-          capture={funnel?.capture_step || {}}
+          capture={captureConfig}
           primaryColor={primaryColor}
+          errors={visibleLeadErrors}
         />
       );
     }
@@ -476,7 +611,7 @@ const Home = () => {
 
   return (
     <div
-      className="h-dvh w-full relative flex flex-col text-slate-100 bg-slate-950 overflow-hidden"
+      className="min-h-dvh w-full relative flex flex-col text-slate-100 bg-slate-950 overflow-hidden"
       style={{ fontFamily }}
     >
       {/* Background Image & Overlay */}
@@ -484,22 +619,22 @@ const Home = () => {
         className="absolute inset-0 bg-cover bg-center z-0 transition-opacity duration-1000"
         style={{ backgroundImage: `url(${backgroundImageUrl})` }}
       />
-      <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] z-1" />
+      <div className="absolute inset-0 bg-slate-950/60 sm:bg-slate-950/50 backdrop-blur-[2px] z-1" />
 
       {/* Header */}
-      <header className="relative z-10 p-3 sm:p-5 flex justify-between items-center">
-        <img src={logoUrl} alt="Logo" className="h-12 sm:h-35 w-auto object-contain rounded-4xl m-4" />
+      <header className="relative z-10 p-3 sm:p-5 flex justify-between items-center gap-3">
+        <img src={logoUrl} alt="Logo" className="h-12 sm:h-20 lg:h-24 max-w-[55vw] w-auto object-contain rounded-2xl" />
 
         {started && step <= questionCount + 1 && (
-          <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-2xl lg:text-lg font-bold text-white m-4">
+          <div className="shrink-0 px-3 sm:px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm sm:text-base font-bold text-white">
             {step > questionCount ? "Last step" : `${step} of ${questionCount}`}
           </div>
         )}
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-1.5 sm:px-4 pb-20 sm:pb-28 overflow-y-auto">
-        <div className="w-full max-w-7xl p-4 sm:p-10">
+      <main className="relative z-10 flex-1 flex items-center justify-center px-3 sm:px-6 pb-24 sm:pb-28 overflow-y-auto">
+        <div className="w-full max-w-5xl p-0 sm:p-6 lg:p-8">
           {renderContent()}
 
           {isSubmitError && (
@@ -512,30 +647,34 @@ const Home = () => {
 
       {/* Navigation */}
       {started && step <= questionCount + 1 && (
-        <nav className="fixed bottom-0 inset-x-0 z-20 p-4 sm:p-8 flex justify-center bg-gradient-to-t from-slate-950/80 to-transparent">
-          <div className="flex items-center gap-6 sm:gap-10">
+        <nav className="fixed bottom-0 inset-x-0 z-20 px-4 pt-8 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:p-8 flex justify-center bg-gradient-to-t from-slate-950/95 via-slate-950/70 to-transparent">
+          <div className="grid grid-cols-2 gap-3 w-full max-w-md">
             <button
               onClick={handlePrevious}
               disabled={step === 1}
-              className="w-14 h-14 sm:w-20 h-20 rounded-full flex items-center justify-center bg-white/10 border border-white/10 text-white disabled:opacity-20 hover:bg-white/20 transition-all active:scale-90 shadow-lg"
+              className="h-14 sm:h-16 rounded-full flex items-center justify-center gap-2 bg-white/12 border border-white/15 text-white font-bold text-base sm:text-lg disabled:opacity-30 hover:bg-white/20 transition-all active:scale-95 shadow-lg"
             >
-              <UpIcon className="w-8 h-8 sm:w-10 h-10 -rotate-90" />
+              <UpIcon className="w-5 h-5 sm:w-6 sm:h-6 -rotate-90" />
+              Back
             </button>
 
             <button
-              onClick={step === questionCount + 1 ? submitLeadMutation : handleNext}
+              onClick={step === questionCount + 1 ? handleLeadSubmit : handleNext}
               disabled={
                 isSubmitting ||
-                (step <= questionCount && questions[step - 1].type !== "single" && !answers[`q${step}`]) ||
-                (step > questionCount && (!answers.name || !answers.phone))
+                (step <= questionCount && questions[step - 1].type !== "single" && !answers[`q${step}`])
               }
-              className="w-14 h-14 sm:w-20 h-20 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110 active:scale-90 shadow-lg disabled:opacity-40"
+              className="h-14 sm:h-16 rounded-full flex items-center justify-center gap-2 text-white font-bold text-base sm:text-lg transition-all hover:brightness-110 active:scale-95 shadow-lg disabled:opacity-45"
               style={{ backgroundColor: primaryColor }}
             >
               {step === questionCount + 1 ? (
-                <SendIcon className="w-7 h-7 sm:w-9 h-9 ml-1" />
+                <>
+                  Submit <SendIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                </>
               ) : (
-                <DownIcon className="w-8 h-8 sm:w-10 h-10 -rotate-90" />
+                <>
+                  Next <DownIcon className="w-5 h-5 sm:w-6 sm:h-6 -rotate-90" />
+                </>
               )}
             </button>
           </div>

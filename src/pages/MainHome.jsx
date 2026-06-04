@@ -12,18 +12,27 @@ const MainHome = () => {
     return (
         <Box
             sx={{
-                minHeight: "100vh",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                bgcolor: "background.default",
-                px: 2,
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "#f8fafc",
+        px: { xs: 2, sm: 3 },
+        py: 4,
             }}
         >
-            <Card sx={{ maxWidth: 400, width: "100%", borderRadius: 3 }}>
+            <Card
+                sx={{
+                    maxWidth: 420,
+                    width: "100%",
+                    borderRadius: 3,
+                    boxShadow: "0 18px 45px rgba(15,23,42,0.1)",
+                    border: "1px solid rgba(15,23,42,0.06)",
+                }}
+            >
                 <CardContent
                     sx={{
-                        p: 4,
+                        p: { xs: 3, sm: 4 },
                         display: "flex",
                         flexDirection: "column",
                         gap: 3,

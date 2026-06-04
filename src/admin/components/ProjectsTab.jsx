@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect, useMemo } from "react";
+import React, { useState, memo, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -87,7 +87,6 @@ const ProjectsTab = () => {
     isLoading,
     isError,
     error,
-    refetch,
     isFetching,
   } = useQuery({
     queryKey: ["funnels"],
@@ -180,29 +179,39 @@ const ProjectsTab = () => {
         sx={{
           borderRadius: 2,
           border: "1px solid rgba(148,163,184,0.25)",
-          p: 2.5,
+          p: { xs: 2, sm: 2.5 },
           display: "flex",
+          flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
           justifyContent: "space-between",
           gap: 2,
+          bgcolor: "rgba(15,23,42,0.78)",
+          boxShadow: "0 12px 28px rgba(0,0,0,0.18)",
         }}
       >
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, width: "100%", minWidth: 0 }}>
           <Typography variant="subtitle1" fontWeight={600}>
             {funnel.title}
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, overflowWrap: "anywhere" }}>
             /{funnel.slug}
           </Typography>
           {funnel.description && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1, overflowWrap: "anywhere" }}>
               {funnel.description}
             </Typography>
           )}
         </Box>
 
-        <Stack direction="row" spacing={1.5} alignItems="center">
-          <Box sx={{ textAlign: "right" }}>
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          useFlexGap
+          flexWrap="wrap"
+          sx={{ width: { xs: "100%", md: "auto" }, justifyContent: { xs: "space-between", md: "flex-end" } }}
+        >
+          <Box sx={{ textAlign: { xs: "left", md: "right" }, minWidth: 64 }}>
             <Typography variant="caption" color="text.secondary">
               Visits
             </Typography>
@@ -210,7 +219,7 @@ const ProjectsTab = () => {
               {funnel.metrics?.total_visits ?? 0}
             </Typography>
           </Box>
-          <Box sx={{ textAlign: "right" }}>
+          <Box sx={{ textAlign: { xs: "left", md: "right" }, minWidth: 64 }}>
             <Typography variant="caption" color="text.secondary">
               Leads
             </Typography>
@@ -228,10 +237,11 @@ const ProjectsTab = () => {
             variant="outlined"
             size="small"
             onClick={() => onCopy(funnel, shareLink)}
+            sx={{ whiteSpace: "nowrap" }}
           >
             {copiedId === funnel._id ? "Link Copied" : "Share Link"}
           </Button>
-          <Button variant="outlined" size="small" onClick={() => onEdit(funnel)}>
+          <Button variant="outlined" size="small" onClick={() => onEdit(funnel)} sx={{ whiteSpace: "nowrap" }}>
             Edit
           </Button>
           <IconButton size="small" color="error" onClick={() => onDelete(funnel)}>
@@ -389,7 +399,21 @@ const ProjectsTab = () => {
     };
 
     return (
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+      <Dialog
+        open={open}
+        onClose={onClose}
+        fullWidth
+        maxWidth="md"
+        PaperProps={{
+          sx: {
+            m: { xs: 1, sm: 3 },
+            maxHeight: { xs: "calc(100dvh - 16px)", sm: "calc(100dvh - 64px)" },
+            width: { xs: "calc(100% - 16px)", sm: "100%" },
+            bgcolor: "background.paper",
+            border: "1px solid rgba(148,163,184,0.18)",
+          },
+        }}
+      >
         <DialogTitle>
           {mode === "create" ? "Add New Project" : "Edit Project"}
         </DialogTitle>
@@ -399,6 +423,7 @@ const ProjectsTab = () => {
             flexDirection: "column",
             gap: 3,
             mt: 1,
+            px: { xs: 2, sm: 3 },
           }}
         >
           {dialogError && (
@@ -494,7 +519,7 @@ const ProjectsTab = () => {
             sx={{
               display: "flex",
               gap: 2,
-              flexWrap: "nowrap",
+              flexWrap: "wrap",
             }}
           >
             <TextField
@@ -504,7 +529,7 @@ const ProjectsTab = () => {
               onChange={(e) =>
                 handleChangeField(["branding", "primary_color"], e.target.value)
               }
-              sx={{ flex: 1, minWidth: 0 }}
+              sx={{ flex: "1 1 140px", minWidth: 0 }}
               InputLabelProps={{ shrink: true }}
             />
             <TextField
@@ -514,7 +539,7 @@ const ProjectsTab = () => {
               onChange={(e) =>
                 handleChangeField(["branding", "secondary_color"], e.target.value)
               }
-              sx={{ flex: 1, minWidth: 0 }}
+              sx={{ flex: "1 1 140px", minWidth: 0 }}
               InputLabelProps={{ shrink: true }}
             />
             <TextField
@@ -524,7 +549,7 @@ const ProjectsTab = () => {
               onChange={(e) =>
                 handleChangeField(["branding", "font_family"], e.target.value)
               }
-              sx={{ flex: 1, minWidth: 0 }}
+              sx={{ flex: "1 1 180px", minWidth: 0 }}
             >
               <MenuItem value="Inter">Inter</MenuItem>
               <MenuItem value="Roboto">Roboto</MenuItem>
@@ -534,7 +559,8 @@ const ProjectsTab = () => {
           </Box>
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
             <TextField
-              label="Contact phone number"
+              label="Call button phone number"
+              helperText="Shown as Call Now on the thank-you page after a lead submits."
               value={form.contact.phone_number}
               onChange={(e) =>
                 handleChangeField(["contact", "phone_number"], e.target.value)
@@ -543,6 +569,7 @@ const ProjectsTab = () => {
             />
             <TextField
               label="WhatsApp number"
+              helperText="Shown as WhatsApp Us on the thank-you page."
               value={form.contact.whatsapp_number}
               onChange={(e) =>
                 handleChangeField(["contact", "whatsapp_number"], e.target.value)
@@ -618,8 +645,9 @@ const ProjectsTab = () => {
                 key={index}
                 sx={{
                   borderRadius: 2,
-                  border: "1px solid rgba(148,163,184,0.4)",
-                  p: 2,
+                  border: "1px solid rgba(148,163,184,0.24)",
+                  bgcolor: "rgba(2,6,23,0.26)",
+                  p: { xs: 1.5, sm: 2 },
                   display: "flex",
                   flexDirection: "column",
                   gap: 1.5,
@@ -644,7 +672,7 @@ const ProjectsTab = () => {
                     onChange={(e) =>
                       handleQuestionChange(index, "type", e.target.value)
                     }
-                    sx={{ minWidth: 160 }}
+                    sx={{ minWidth: { xs: "100%", sm: 160 } }}
                   >
                     <MenuItem value="single">Single choice</MenuItem>
                     <MenuItem value="multi">Multi choice</MenuItem>
@@ -699,7 +727,7 @@ const ProjectsTab = () => {
             </Button>
           </Box>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, pb: 2, flexWrap: "wrap" }}>
           <Button onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>
@@ -865,7 +893,7 @@ const ProjectsTab = () => {
       setTimeout(() => {
         setCopiedId((current) => (current === funnel._id ? null : current));
       }, 2000);
-    } catch (e) {
+    } catch {
       const tempInput = document.createElement("input");
       tempInput.value = link;
       document.body.appendChild(tempInput);
@@ -896,10 +924,12 @@ const ProjectsTab = () => {
       {!isLoading && !isError && funnels.length > 0 && (
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: { xs: "stretch", sm: "center" },
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 1.5,
+          mb: 2,
           }}
         >
           <Typography variant="subtitle1" fontWeight={600}>
@@ -908,7 +938,7 @@ const ProjectsTab = () => {
           <Button
             variant="contained"
             onClick={handleOpen}
-            sx={{ borderRadius: "999px" }}
+            sx={{ borderRadius: "999px", alignSelf: { xs: "stretch", sm: "auto" } }}
           >
             Add Project
           </Button>
