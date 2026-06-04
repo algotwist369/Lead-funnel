@@ -106,25 +106,25 @@ const FieldError = ({ message }) =>
 // --- Sub-Components ---
 
 const StartScreen = ({ funnel, primaryColor, onStart }) => (
-  <div className="text-center transition-all duration-700 opacity-100 px-1 flex flex-col items-center justify-center">
+  <div className="w-full text-center transition-all duration-700 opacity-100 px-1 flex flex-col items-center justify-center">
     <h1
-      className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 max-w-5xl"
+      className="text-[28px] sm:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-3 max-w-4xl text-balance"
     >
       {funnel?.title || "Welcome"}
     </h1>
-    <p className="funnel-description text-base sm:text-xl lg:text-2xl text-center font-medium opacity-90 mb-7 max-w-3xl mx-auto leading-relaxed text-white/80">
+    <p className="funnel-description text-sm sm:text-xl lg:text-2xl text-center font-medium opacity-90 mb-6 max-w-2xl mx-auto leading-relaxed text-white/80">
       {funnel?.description || "Take a moment to share your preferences."}
     </p>
     <button
       onClick={onStart}
-      className="w-full max-w-xs sm:w-auto sm:min-w-52 px-8 py-4 rounded-full text-xl sm:text-2xl font-bold transition-all hover:scale-[1.02] active:scale-95 shadow-xl"
+      className="w-full max-w-[280px] sm:w-auto sm:min-w-52 px-7 py-3.5 sm:py-4 rounded-full text-lg sm:text-2xl font-bold transition-all hover:scale-[1.02] active:scale-95 shadow-xl"
       style={{ backgroundColor: primaryColor }}
     >
       Start
     </button>
-    <div className="mt-5 bg-white/10 border border-white/15 px-4 py-2 rounded-full flex items-center justify-center gap-2 text-white/80">
+    <div className="mt-4 bg-white/10 border border-white/15 px-3.5 py-2 rounded-full flex items-center justify-center gap-2 text-white/80">
       <TimeIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-      <span className="text-sm sm:text-base font-medium">Takes about 30 seconds</span>
+      <span className="text-xs sm:text-base font-medium">Takes about 30 seconds</span>
     </div>
   </div>
 );
@@ -135,7 +135,7 @@ const QuestionStep = ({ question, step, answers, onOptionSelect, onInputChange, 
 
   return (
     <div className="transition-all duration-500 opacity-100">
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6 sm:mb-8 text-white">
+      <h2 className="text-[26px] sm:text-4xl lg:text-5xl font-bold leading-tight mb-5 sm:mb-8 text-white">
         Q. {question.label}
       </h2>
 
@@ -150,20 +150,20 @@ const QuestionStep = ({ question, step, answers, onOptionSelect, onInputChange, 
               <div
                 key={option}
                 onClick={() => onOptionSelect(option)}
-                className={`p-4 sm:p-5 rounded-2xl cursor-pointer flex items-center gap-3 sm:gap-4 transition-all duration-300 border-2 min-h-16 ${isSelected
+                className={`p-3.5 sm:p-5 rounded-2xl cursor-pointer flex items-center gap-3 sm:gap-4 transition-all duration-300 border-2 min-h-14 sm:min-h-16 ${isSelected
                   ? "bg-white/10 border-indigo-500"
                   : "bg-white/20 border-white/20 hover:bg-white/10 hover:border-white/20"
                   }`}
                 style={isSelected ? { borderColor: primaryColor, backgroundColor: `${primaryColor}22` } : {}}
               >
                 <div
-                  className={`w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center shrink-0 border-2 transition-colors ${isMulti ? "rounded-lg" : "rounded-full"
+                  className={`w-6 h-6 sm:w-9 sm:h-9 flex items-center justify-center shrink-0 border-2 transition-colors ${isMulti ? "rounded-lg" : "rounded-full"
                     } ${isSelected ? "border-white" : "border-white/40"}`}
                   style={isSelected ? { backgroundColor: primaryColor, borderColor: primaryColor } : {}}
                 >
                   {isSelected && <div className={`w-2.5 h-2.5 bg-white ${isMulti ? "rounded-sm" : "rounded-full"}`} />}
                 </div>
-                <span className={`text-lg sm:text-2xl lg:text-3xl leading-snug break-words min-w-0 ${isSelected ? "font-extrabold text-white" : "font-semibold text-white/80"}`}>
+                <span className={`text-base sm:text-2xl lg:text-3xl leading-snug break-words min-w-0 ${isSelected ? "font-extrabold text-white" : "font-semibold text-white/80"}`}>
                   {option}
                 </span>
               </div>
@@ -177,7 +177,7 @@ const QuestionStep = ({ question, step, answers, onOptionSelect, onInputChange, 
               placeholder="Type your answer here..."
               value={currentAnswer}
               onChange={(e) => onInputChange(`q${step}`, e.target.value)}
-              className="w-full bg-white/10 border-2 border-white/20 rounded-2xl p-4 sm:p-5 text-lg sm:text-xl text-white placeholder-white/40 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-white/10 border-2 border-white/20 rounded-2xl p-3.5 sm:p-5 text-base sm:text-xl text-white placeholder-white/40 focus:outline-none focus:border-indigo-500 transition-colors"
               style={{ borderColor: currentAnswer ? primaryColor : "rgba(255,255,255,0.1)" }}
               autoFocus
             />
@@ -187,7 +187,7 @@ const QuestionStep = ({ question, step, answers, onOptionSelect, onInputChange, 
               placeholder="Type your answer here..."
               value={currentAnswer}
               onChange={(e) => onInputChange(`q${step}`, e.target.value)}
-              className="w-full bg-white/10 border-2 border-white/20 rounded-2xl p-4 sm:p-5 text-lg sm:text-xl text-white placeholder-white/40 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-white/10 border-2 border-white/20 rounded-2xl p-3.5 sm:p-5 text-base sm:text-xl text-white placeholder-white/40 focus:outline-none focus:border-indigo-500 transition-colors"
               style={{ borderColor: currentAnswer ? primaryColor : "rgba(255,255,255,0.1)" }}
               autoFocus
             />
@@ -212,18 +212,18 @@ const LeadCaptureForm = ({
   const askEmail = capture.ask_email === true;
   const askAddress = capture.ask_address === true;
 
-  const inputClasses = "w-full bg-white/20 border-2 rounded-2xl p-4 sm:p-5 text-lg sm:text-xl text-white placeholder-white/70 focus:outline-none focus:border-indigo-500 transition-colors";
+  const inputClasses = "w-full bg-white/15 border-2 rounded-2xl px-4 py-3.5 sm:p-5 text-base sm:text-xl text-white placeholder-white/65 focus:outline-none focus:border-indigo-500 transition-colors";
 
   const fieldClass = (field) =>
     `${inputClasses} ${errors[field] ? "border-red-400" : "border-white/20"}`;
 
   return (
-    <div className="transition-all duration-500 opacity-100 space-y-5 border p-4 sm:p-6 lg:p-8 rounded-3xl bg-black/55 border-white/10 backdrop-blur-md">
-      <p className="text-2xl sm:text-3xl lg:text-4xl font-semibold opacity-90 mb-6">
+    <div className="transition-all duration-500 opacity-100 space-y-4 border px-4 py-5 sm:p-6 lg:p-8 rounded-3xl bg-black/60 border-white/10 backdrop-blur-md shadow-2xl">
+      <p className="text-[22px] sm:text-3xl lg:text-4xl font-semibold opacity-90 mb-4">
         Please provide your details.
       </p>
 
-      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-4 sm:space-y-5">
+      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-3.5 sm:space-y-5">
         {askName && (
           <div>
             <input
@@ -290,14 +290,14 @@ const LeadCaptureForm = ({
         )}
 
         <div className="text-left">
-          <p className="text-base sm:text-lg font-bold mb-3 opacity-90">How would you like to be contacted?</p>
+          <p className="text-sm sm:text-lg font-bold mb-2.5 opacity-90">How would you like to be contacted?</p>
           <div className="grid grid-cols-2 gap-3">
             {["call", "whatsapp"].map((method) => (
               <button
                 key={method}
                 type="button"
                 onClick={() => onInputChange("preferred_contact", method)}
-                className={`py-4 rounded-full font-bold capitalize transition-all border-2 text-base sm:text-lg ${answers.preferred_contact === method
+                className={`py-3.5 sm:py-4 rounded-full font-bold capitalize transition-all border-2 text-sm sm:text-lg ${answers.preferred_contact === method
                   ? "bg-white text-slate-900 border-white"
                   : "border-white/20 text-white hover:bg-white/5"
                   }`}
@@ -308,7 +308,7 @@ const LeadCaptureForm = ({
             ))}
           </div>
         </div>
-        <p className="text-sm text-white/60 text-center pt-1">
+        <p className="text-xs sm:text-sm text-white/60 text-center pt-0.5">
           Tap Submit below when your details are ready.
         </p>
       </form>
@@ -622,11 +622,11 @@ const Home = () => {
       <div className="absolute inset-0 bg-slate-950/60 sm:bg-slate-950/50 backdrop-blur-[2px] z-1" />
 
       {/* Header */}
-      <header className="relative z-10 p-3 sm:p-5 flex justify-between items-center gap-3">
-        <img src={logoUrl} alt="Logo" className="h-12 sm:h-20 lg:h-24 max-w-[55vw] w-auto object-contain rounded-2xl" />
+      <header className="relative z-10 px-3 py-2.5 sm:p-5 flex justify-between items-center gap-3">
+        <img src={logoUrl} alt="Logo" className="h-10 sm:h-20 lg:h-24 max-w-[52vw] w-auto object-contain rounded-xl sm:rounded-2xl" />
 
         {started && step <= questionCount + 1 && (
-          <div className="shrink-0 px-3 sm:px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm sm:text-base font-bold text-white">
+          <div className="shrink-0 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-base font-bold text-white">
             {step > questionCount ? "Last step" : `${step} of ${questionCount}`}
           </div>
         )}
@@ -647,14 +647,14 @@ const Home = () => {
 
       {/* Navigation */}
       {started && step <= questionCount + 1 && (
-        <nav className="fixed bottom-0 inset-x-0 z-20 px-4 pt-8 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:p-8 flex justify-center bg-gradient-to-t from-slate-950/95 via-slate-950/70 to-transparent">
-          <div className="grid grid-cols-2 gap-3 w-full max-w-md">
+        <nav className="fixed bottom-0 inset-x-0 z-20 px-3 pt-7 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:p-8 flex justify-center bg-gradient-to-t from-slate-950/95 via-slate-950/70 to-transparent">
+          <div className="grid grid-cols-2 gap-2.5 w-full max-w-md">
             <button
               onClick={handlePrevious}
               disabled={step === 1}
-              className="h-14 sm:h-16 rounded-full flex items-center justify-center gap-2 bg-white/12 border border-white/15 text-white font-bold text-base sm:text-lg disabled:opacity-30 hover:bg-white/20 transition-all active:scale-95 shadow-lg"
+              className="h-12 sm:h-16 rounded-full flex items-center justify-center gap-1.5 sm:gap-2 bg-white/12 border border-white/15 text-white font-bold text-sm sm:text-lg disabled:opacity-30 hover:bg-white/20 transition-all active:scale-95 shadow-lg"
             >
-              <UpIcon className="w-5 h-5 sm:w-6 sm:h-6 -rotate-90" />
+              <UpIcon className="w-4 h-4 sm:w-6 sm:h-6 -rotate-90" />
               Back
             </button>
 
@@ -664,16 +664,16 @@ const Home = () => {
                 isSubmitting ||
                 (step <= questionCount && questions[step - 1].type !== "single" && !answers[`q${step}`])
               }
-              className="h-14 sm:h-16 rounded-full flex items-center justify-center gap-2 text-white font-bold text-base sm:text-lg transition-all hover:brightness-110 active:scale-95 shadow-lg disabled:opacity-45"
+              className="h-12 sm:h-16 rounded-full flex items-center justify-center gap-1.5 sm:gap-2 text-white font-bold text-sm sm:text-lg transition-all hover:brightness-110 active:scale-95 shadow-lg disabled:opacity-45"
               style={{ backgroundColor: primaryColor }}
             >
               {step === questionCount + 1 ? (
                 <>
-                  Submit <SendIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                  Submit <SendIcon className="w-4 h-4 sm:w-6 sm:h-6" />
                 </>
               ) : (
                 <>
-                  Next <DownIcon className="w-5 h-5 sm:w-6 sm:h-6 -rotate-90" />
+                  Next <DownIcon className="w-4 h-4 sm:w-6 sm:h-6 -rotate-90" />
                 </>
               )}
             </button>
